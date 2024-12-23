@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using GTC_Scripts;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BPuzzle : MonoBehaviour, IInteractable, ISelectionBorder
+public class BPuzzle : MonoBehaviour, IInteractable
 {
     [SerializeField] private string _prompt;
     public string Interactionprompt => _prompt;
@@ -23,57 +24,48 @@ public class BPuzzle : MonoBehaviour, IInteractable, ISelectionBorder
     public FollowPlayerCamera cameraScript;
     public GameObject movementScript;
 
+    
     public bool Interact(Interactor interactor)
     {
         Debug.Log("Interacting with BPuzzle");
-        if(displayNumber != null) changeNumber();
         if(cameraScript != null) cameraScript.ToggleCameraFollow();
+        // movementScript toggle
         return true;
     }
 
-    public void ChoseComponent()
+    public void ChangeNumberPuzzleComponent()
     {
-        int i = puzzleComponents.Length - 1;
+        if (puzzleComponents != null )
+        {
+            BPuzzleNumber selectedComponent = puzzleComponents[puzzleComponentIndex];
+            selectedComponent.ChangeNumber();
+            selectedComponent.ShowBorder();
+        }
+    }
+    public void HideBorderOnPuzzleComponent()
+    {
         if (puzzleComponents != null)
         {
-            BPuzzleNumber selectedComponent = puzzleComponents[i];
-            
+            BPuzzleNumber selectedComponent = puzzleComponents[puzzleComponentIndex];
+            selectedComponent.HideBorder();
         }
     }
-
-    public int changeNumber()
-    {
-        string n1 = "1";
-        string n2 = "0";
-        if (!number)
-        {
-            displayNumber.text = n1;
-            number = true;
-            return 1;
-        }
-        else
-        {
-            displayNumber.text = n2;
-            number = false;
-            return 0;
-        }
-    }
-
-
+    
     public void Start()
     {
         image.gameObject.SetActive(false);
+        puzzleComponentIndex = puzzleComponents.Length - 1;
     }
 
-    public void ShowBorder()
+    public void changePuzzleComponentIndexUp()
     {
-        image.transform.position = displayNumber.transform.position;
-        image.gameObject.SetActive(true);
+        if(puzzleComponents == null) return;
+        if(puzzleComponentIndex > puzzleComponents.Length -1) puzzleComponentIndex++;
+    }    
+    public void changePuzzleComponentIndexDown()
+    {
+        if(puzzleComponents == null) return;
+        if(puzzleComponentIndex >= 0) puzzleComponentIndex--;
     }
 
-    public void HideBorder()
-    {
-        image.gameObject.SetActive(false);
-    }
-    
 }

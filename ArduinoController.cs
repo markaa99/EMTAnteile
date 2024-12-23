@@ -17,7 +17,7 @@ public class ArduinoController : MonoBehaviour
 
     void Update()
     {
-        if (sp.IsOpen && sp.BytesToRead > 0) // Prüfen, ob Daten vorhanden sind
+        if (sp.IsOpen && sp.BytesToRead > 0) // Prï¿½fen, ob Daten vorhanden sind
         {
             string data = sp.ReadLine();
             Debug.Log(data);
@@ -27,7 +27,7 @@ public class ArduinoController : MonoBehaviour
 
     public string GetData()
     {
-        return this.arduinoData;
+        return arduinoData;
     }
 
     private void OnApplicationQuit()
