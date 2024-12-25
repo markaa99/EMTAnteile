@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using GTC_Scripts;
@@ -17,6 +18,21 @@ public class Interactor : MonoBehaviour
 
     private IInteractable _interactable;
     private ISelectionBorder _selectionBorder;
+
+    private void Start()
+    {
+        bool interaction = false;
+        SerialController serialController = FindObjectOfType<SerialController>();
+        if (serialController != null)
+        {
+            serialController.OnInteractionInput += (interactionInput) =>
+            {
+                interaction = interactionInput; 
+                Debug.Log("InteractoinEvent received with input: " + interactionInput);
+            };
+        }
+    }
+
     private void Update()
     {
         // Returns the number of Objects found around the given Object

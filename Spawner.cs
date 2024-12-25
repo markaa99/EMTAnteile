@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
-
+/*
 public class Spawner : MonoBehaviour
 {
     public GameObject prefab;
@@ -58,3 +58,4 @@ public class Spawner : MonoBehaviour
 
    
 }
+*/
