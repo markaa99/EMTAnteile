@@ -18,10 +18,10 @@ public class Interactor : MonoBehaviour
 
     private IInteractable _interactable;
     private ISelectionBorder _selectionBorder;
-
+    bool interaction = false;
     private void Start()
     {
-        bool interaction = false;
+        
         SerialController serialController = FindObjectOfType<SerialController>();
         if (serialController != null)
         {

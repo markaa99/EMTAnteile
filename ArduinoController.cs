@@ -2,9 +2,8 @@ using UnityEngine;
 using System.IO.Ports;
 public class SerialController : MonoBehaviour
 {
-    SerialPort sp = new SerialPort("COM3", 9600);
-    public delegate void MovementInputHandler(Vector3 
-        );
+    SerialPort sp = new SerialPort("COM4", 9600);
+    public delegate void MovementInputHandler(Vector3 movementInput);
     public delegate void InteractionInputHandler(bool interaction);
     public event MovementInputHandler OnMovementInput;
     public event InteractionInputHandler OnInteractionInput;
@@ -47,10 +46,10 @@ public class SerialController : MonoBehaviour
 
     void ProcessInput()
     {
-        float right = buttonStates[0];
-        float forward = buttonStates[1];
-        float backward = buttonStates[2];
-        float left = buttonStates[3];
+        float forward = buttonStates[0];
+        float backward = buttonStates[1];
+        float left = buttonStates[2];
+        float right = buttonStates[3];
         int interactionInt = buttonStates[4];
         bool interactionBool = false;
         interactionBool = (interactionInt == 1) ? true : false;

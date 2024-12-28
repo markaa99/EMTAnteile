@@ -53,5 +53,6 @@ public class Movement : MonoBehaviour
     {
         Vector3 movement = ((transform.forward * -input.x) + (transform.right * input.z)).normalized * moveSpeed;
         rb.velocity = new Vector3(movement.x, rb.velocity.y, movement.z);
+        
     }
 }
