@@ -28,7 +28,7 @@ public class Interactor : MonoBehaviour
             serialController.OnInteractionInput += (interactionInput) =>
             {
                 interaction = interactionInput; 
-                Debug.Log("InteractoinEvent received with input: " + interactionInput);
+                Debug.Log("InteractionEvent received with input: " + interactionInput);
             };
         }
     }
@@ -41,7 +41,7 @@ public class Interactor : MonoBehaviour
         if (_numFound > 0)
         {
             _interactable = _colliders[0].GetComponent<IInteractable>();
-            _selectionBorder = _colliders[0].GetComponent<ISelectionBorder>();
+            //_selectionBorder = _colliders[0].GetComponent<ISelectionBorder>();
             
             if (_interactable != null && _selectionBorder != null) 
             {

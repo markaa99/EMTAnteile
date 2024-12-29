@@ -32,7 +32,6 @@ public class Movement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Rotate();
         if (!controllerEnabled)
         {
             // Raw for now because of no smoothing (better for keyboard), for Arduino maybe without raw.
@@ -40,14 +39,7 @@ public class Movement : MonoBehaviour
         }
         Move(input);
     }
-
-    void Rotate()
-    {
-        if (Input.GetKey(KeyCode.Q))
-            transform.Rotate(0, -rotationSpeed * Time.deltaTime, 0);
-        if (Input.GetKey(KeyCode.E))
-            transform.Rotate(0, rotationSpeed * Time.deltaTime, 0);
-    }
+    
 
     void Move(Vector3 input)
     {
