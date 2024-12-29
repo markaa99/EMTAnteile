@@ -13,28 +13,24 @@ public class BPuzzle : MonoBehaviour, IInteractable
     public string Interactionprompt => _prompt;
 
     private bool number;
-    
-    
-    [SerializeField] public TextMeshProUGUI displayNumber;
-    [SerializeField] public Image image;
+
     [SerializeField] public BPuzzleNumber[] puzzleComponents;
     private int puzzleComponentIndex = 0; 
 
     public FollowPlayerCamera cameraScript;
-    public GameObject movementScript;
     public SerialController serialController;
-    public int puzzleNumberIterator;
-    
-    private bool activated = false;
-    
+
+    public BPuzzleNumber[] getBPuzzleComponents()
+    {
+        return puzzleComponents;
+    }
     public bool Interact(Interactor interactor)
     {
         Debug.Log("Interacting with BPuzzle");
         if(cameraScript != null) cameraScript.ToggleCameraFollow();
         // movementScript und camerascript toggle
-        ToggleCameraFollowAndMovement();
+        serialController.ToggleMovmentAndRotation();
         ActivateCurrentPuzzleComponent();
-        activated = true;
         return true;
     }
 
@@ -47,60 +43,52 @@ public class BPuzzle : MonoBehaviour, IInteractable
     {
         if (puzzleComponents != null )
         {
+            Debug.Log("activated puzzle component");
             BPuzzleNumber selectedComponent = puzzleComponents[puzzleComponentIndex];
             selectedComponent.ShowBorder();
-        }
-    }
-    public void ChangeNumberPuzzleComponent()
-    {
-        if (puzzleComponents != null )
-        {
-            BPuzzleNumber selectedComponent = puzzleComponents[puzzleComponentIndex];
-            selectedComponent.ChangeNumber();
-            selectedComponent.ShowBorder();
-        }
-    }
-    public void HideBorderOnPuzzleComponent()
-    {
-        if (puzzleComponents != null)
-        {
-            BPuzzleNumber selectedComponent = puzzleComponents[puzzleComponentIndex];
-            selectedComponent.HideBorder();
         }
     }
     
     void Start()
     {
-        //image.gameObject.SetActive(false);
-        puzzleComponentIndex = puzzleComponents.Length - 1;
-        
-        if (activated)
+        serialController.OnPuzzleInput += ShowBorderOfCurrentSelection;
+
+    }
+    
+    void ShowBorderOfCurrentSelection(int index, bool change)
+    {
+        Debug.Log("ChainReaction hat bekommen: "+ index +" und " + change);
+        if (index != 0)
         {
-            serialController.OnInteractionInput += (interaction) =>
+            if (puzzleComponentIndex < puzzleComponents.Length - 1 && index > 0)
             {
-                if (interaction) ActivateCurrentPuzzleComponent();
-            };
-            serialController.OnPuzzleInput += ChainReaction;
+                BPuzzleNumber selectedComponent = puzzleComponents[puzzleComponentIndex];
+                selectedComponent.HideBorder();
+                puzzleComponentIndex += index;
+                BPuzzleNumber newSelectedComponent = puzzleComponents[puzzleComponentIndex];
+                newSelectedComponent.ShowBorder();
+            }
+            if (puzzleComponentIndex > 0 && index < 0)
+            {
+                BPuzzleNumber selectedComponent = puzzleComponents[puzzleComponentIndex];
+                selectedComponent.HideBorder();
+                puzzleComponentIndex += index;
+                BPuzzleNumber newSelectedComponent = puzzleComponents[puzzleComponentIndex];
+                newSelectedComponent.ShowBorder();
+            }
         }
-    }
 
-    void ChainReaction(int index, bool change)
-    {
-        BPuzzleNumber selectedComponent = puzzleComponents[puzzleComponentIndex];
-        selectedComponent.HideBorder();
-        if(puzzleComponentIndex == puzzleComponentIndex -2 ) puzzleComponentIndex += index;
-        selectedComponent.ShowBorder();
-        if(change) selectedComponent.ChangeNumber();
-    }
-    public void changePuzzleComponentIndexUp()
-    {
-        if(puzzleComponents == null) return;
-        if(puzzleComponentIndex > puzzleComponents.Length -1) puzzleComponentIndex++;
-    }    
-    public void changePuzzleComponentIndexDown()
-    {
-        if(puzzleComponents == null) return;
-        if(puzzleComponentIndex >= 0) puzzleComponentIndex--;
-    }
+        if (change && puzzleComponentIndex >= puzzleComponents.Length - 1)
+        {
+            cameraScript.ToggleCameraFollow();
+            serialController.ToggleMovmentAndRotation();
+        }
+        if (change && puzzleComponentIndex < puzzleComponents.Length - 1)
+        {
+            BPuzzleNumber selectedComponent = puzzleComponents[puzzleComponentIndex];
+            selectedComponent.ChangeNumber();
+        }
 
+    }
+    
 }

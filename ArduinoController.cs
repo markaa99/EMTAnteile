@@ -17,7 +17,9 @@ public class SerialController : MonoBehaviour
     
     private Vector3 lastInput = new Vector3();
     private bool lastInputBool = false;
+    private bool lastInteractionInputBool = false;
     private float lastRotationInput = 0f;
+    private int lastPuzzleIndexChange = 0;
     private string lastData = "";
 
     private bool toggleMovementAndRotation = true;
@@ -76,21 +78,33 @@ public class SerialController : MonoBehaviour
                 lastRotationInput = rotationInput;
                 OnRotationInput?.Invoke(lastRotationInput);
             }
-        }
-        else if (!toggleMovementAndRotation)
-        {
-            if (interactionBool != lastInputBool && rotationInput != lastRotationInput)
+            if (interactionBool != lastInputBool)
             {
-                lastInputBool = interactionBool;
-                lastRotationInput = rotationInput;
-                OnPuzzleInput?.Invoke(puzzleIndexChange, interactionBool );
+             lastInputBool = interactionBool;
+             OnInteractionInput?.Invoke(lastInputBool);
             }
         }
-        if (interactionBool != lastInputBool)
+        
+        else if (!toggleMovementAndRotation)
         {
-            lastInputBool = interactionBool;
-            OnInteractionInput?.Invoke(lastInputBool);
+            // Debug.Log("Index: now "+puzzleIndexChange + " | previous:" + lastPuzzleIndexChange);
+            // Debug.Log("Bool for NumberChange: now "+interactionBool + " | previous: " + lastInteractionInputBool);
+            if (interactionBool != lastInteractionInputBool || puzzleIndexChange != lastPuzzleIndexChange)
+            {
+                /*Debug.Log("Success into if condition:");
+                Debug.Log("Change for Index : now "+puzzleIndexChange);
+                Debug.Log("Change for Bool for NumberChange: now "+interactionBool);   */             
+                lastInteractionInputBool = interactionBool;
+                lastPuzzleIndexChange = puzzleIndexChange;
+
+                if (interactionBool != false || puzzleIndexChange != 0)
+                {
+                    Debug.Log("Sending event with: "+ puzzleIndexChange +" und "+ interactionBool);
+                    OnPuzzleInput?.Invoke(puzzleIndexChange, interactionBool);
+                }
+            }
         }
+        
     }
     void OnApplicationQuit()
     {
@@ -100,6 +114,7 @@ public class SerialController : MonoBehaviour
 
     public void ToggleMovmentAndRotation()
     {
+        Debug.Log("ToggleMovmentAndRotation");
         toggleMovementAndRotation = !toggleMovementAndRotation;
     }
 }

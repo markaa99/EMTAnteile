@@ -17,8 +17,8 @@ public class Interactor : MonoBehaviour
     [SerializeField] private int _numFound;
 
     private IInteractable _interactable;
-    private ISelectionBorder _selectionBorder;
     bool interaction = false;
+    private bool _isCooldownActive = false;
     private void Start()
     {
         
@@ -27,7 +27,7 @@ public class Interactor : MonoBehaviour
         {
             serialController.OnInteractionInput += (interactionInput) =>
             {
-                interaction = interactionInput; 
+                this.interaction = interactionInput; 
                 Debug.Log("InteractionEvent received with input: " + interactionInput);
             };
         }
@@ -41,21 +41,23 @@ public class Interactor : MonoBehaviour
         if (_numFound > 0)
         {
             _interactable = _colliders[0].GetComponent<IInteractable>();
-            //_selectionBorder = _colliders[0].GetComponent<ISelectionBorder>();
             
-            if (_interactable != null && _selectionBorder != null) 
+            if (_interactable != null) 
             {
-                _selectionBorder.ShowBorder();
                 if (!_interactionPromptUI.IsDisplayed) _interactionPromptUI.SetUp(_interactable.Interactionprompt);
 
-                if(Keyboard.current.spaceKey.wasPressedThisFrame) _interactable.Interact(this);
+                if (interaction && !_isCooldownActive)
+                {
+                    _interactable.Interact(this);
+                    StartCoroutine(ActivateCooldown());
+                    interaction = false;
+                }
             }
 
         }
         else
         {
             if(_interactable != null) _interactable = null;
-            else if(_selectionBorder != null) _selectionBorder.HideBorder();   
             if(_interactionPromptUI.IsDisplayed) _interactionPromptUI.Close();
         }
 
@@ -64,5 +66,11 @@ public class Interactor : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(_interactionPoint.position, _interactionPointRadius);
+    }
+    IEnumerator ActivateCooldown()
+    {
+        _isCooldownActive = true;
+        yield return new WaitForSeconds(1f);
+        _isCooldownActive = false;
     }
 }

@@ -6,17 +6,14 @@ using GTC_Scripts;
 using TMPro;
 using UnityEngine;
 
-public class DoorLock : MonoBehaviour, IInteractable, ISelectionBorder
+public class DoorLock : MonoBehaviour, IInteractable
 {
     [SerializeField] private string _prompt;
     public string Interactionprompt => _prompt;
 
-    [SerializeField] TextMeshProUGUI textMeshProUGUI1;
-    [SerializeField] TextMeshProUGUI textMeshProUGUI2;
-    [SerializeField] TextMeshProUGUI textMeshProUGUI3;
-    [SerializeField] TextMeshProUGUI textMeshProUGUI4;
+    [SerializeField] BPuzzle bPuzzle;
 
-    private int[] numbersForSolution = new int[4];
+    // private int[] numbersForSolution = new int[4];
     public int solutionNumber;
     
     //Door Movement
@@ -28,11 +25,7 @@ public class DoorLock : MonoBehaviour, IInteractable, ISelectionBorder
     
     public bool Interact(Interactor interactor)
     {
-        numbersForSolution[0] = parseTextIntoIntArray(textMeshProUGUI1.text);
-        numbersForSolution[1] = parseTextIntoIntArray(textMeshProUGUI2.text);
-        numbersForSolution[2] = parseTextIntoIntArray(textMeshProUGUI3.text);
-        numbersForSolution[3] = parseTextIntoIntArray(textMeshProUGUI4.text);
-
+        int[] numbersForSolution = parseTextIntoIntArray(bPuzzle);
         if(calcNumberForDoorCheck(numbersForSolution)) { 
             Debug.Log("Right Numbers");
             if (!doorMoved)
@@ -43,6 +36,22 @@ public class DoorLock : MonoBehaviour, IInteractable, ISelectionBorder
         }
         else Debug.Log("Wrong Numbers");
         return true;
+    }
+
+    int[] parseTextIntoIntArray(BPuzzle bPuzzle)
+    {
+        int[] numbers = new []{-1};
+        if (this.bPuzzle.getBPuzzleComponents() != null)
+        {
+            BPuzzleNumber[] components = bPuzzle.getBPuzzleComponents();
+            numbers = new int[components.Length-1];
+            for (int i = 0; i < numbers.Length; i++)
+            {
+                numbers[i] = components[i].getNumber();
+                 
+            }
+        }
+        return numbers;
     }
 
     bool calcNumberForDoorCheck(int[] binaryArray)
@@ -58,22 +67,9 @@ public class DoorLock : MonoBehaviour, IInteractable, ISelectionBorder
             }
             power++;
         }
+        Debug.Log(result);
         return result == solutionNumber;
 
-    }
-
-    int parseTextIntoIntArray(string text)
-    {
-        try
-        {
-            int n1 = int.Parse(text);
-            return n1;
-        }
-        catch (System.Exception e)
-        {
-            Debug.Log(e.ToString());
-        }
-        return -1;
     }
 
 

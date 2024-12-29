@@ -16,7 +16,7 @@ namespace GTC_Scripts
         
         void Start()
         {
-            this.image.gameObject.SetActive(false);
+            image.gameObject.SetActive(false);
         }
 
         public void ChangeNumber()
@@ -36,5 +36,7 @@ namespace GTC_Scripts
         {
             image.gameObject.SetActive(false);
         }
+        
+        public int getNumber() { return int.Parse(displayNumber.text); }
     }
 }
